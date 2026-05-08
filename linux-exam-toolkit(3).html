@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux Exam Toolkit</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --bg2: #13161e;
+    --bg3: #1c2030;
+    --border: #252a3a;
+    --text: #cdd6f4;
+    --muted: #6b7290;
+    --green: #a6e3a1;
+    --yellow: #f9e2af;
+    --blue: #89b4fa;
+    --red: #f38ba8;
+    --pink: #f5c2e7;
+    --teal: #94e2d5;
+    --lavender: #b4befe;
+    --peach: #fab387;
+    --prompt: #45475a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* ── Header ── */
+  header {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .prompt-line {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    color: var(--muted);
+    font-size: .75rem;
+    margin-bottom: .75rem;
+  }
+  .prompt-line .dollar { color: var(--green); font-weight: 700; }
+  .prompt-line .cmd    { color: var(--text); }
+  .prompt-line .cursor {
+    display: inline-block;
+    width: 8px; height: 1.1em;
+    background: var(--green);
+    animation: blink 1.1s step-end infinite;
+    vertical-align: middle;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--green);
+    letter-spacing: -.02em;
+  }
+  h1 span { color: var(--muted); }
+
+  .subtitle {
+    font-size: .78rem;
+    color: var(--muted);
+    margin-top: .4rem;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    max-width: 860px;
+    margin: 0 auto 2rem;
+    display: flex;
+    gap: .5rem;
+  }
+
+  .tab-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .8rem;
+    padding: .5rem 1.2rem;
+    cursor: pointer;
+    transition: all .15s;
+    border-radius: 4px;
+  }
+  .tab-btn:hover   { border-color: var(--green); color: var(--green); }
+  .tab-btn.active  { background: var(--bg3); border-color: var(--green); color: var(--green); font-weight: 700; }
+  .tab-btn .icon   { margin-right: .35rem; }
+
+  /* ── Views ── */
+  .view { display: none; max-width: 860px; margin: 0 auto; }
+  .view.active { display: block; }
+
+  /* ── Section ── */
+  .section {
+    margin-bottom: 2rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: .85rem;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    padding: .2rem .55rem;
+    border-radius: 3px;
+  }
+
+  .section-desc {
+    font-size: .72rem;
+    color: var(--muted);
+  }
+
+  /* color variants */
+  .lbl-green  { background: rgba(166,227,161,.12); color: var(--green); }
+  .lbl-blue   { background: rgba(137,180,250,.12); color: var(--blue);  }
+  .lbl-yellow { background: rgba(249,226,175,.12); color: var(--yellow);}
+  .lbl-pink   { background: rgba(245,194,231,.12); color: var(--pink);  }
+  .lbl-teal   { background: rgba(148,226,213,.12); color: var(--teal);  }
+  .lbl-peach  { background: rgba(250,179,135,.12); color: var(--peach); }
+  .lbl-lav    { background: rgba(180,190,254,.12); color: var(--lavender);}
+  .lbl-red    { background: rgba(243,139,168,.12); color: var(--red);   }
+
+  /* ── Cards grid ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .65rem;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .85rem 1rem;
+    text-decoration: none;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    transition: border-color .15s, background .15s, transform .12s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+
+  .card:hover {
+    border-color: var(--current-color, var(--green));
+    background: var(--bg3);
+    transform: translateY(-1px);
+  }
+  .card:hover::before { opacity: .6; }
+
+  .card-name {
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .card-url {
+    font-size: .65rem;
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  .card-desc {
+    font-size: .74rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  .card-tag {
+    font-size: .6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-top: .15rem;
+  }
+
+  /* card accent colors by data-accent */
+  .card[data-accent="green"]  { --current-color: var(--green);  }
+  .card[data-accent="green"]  .card-tag { color: var(--green);  }
+  .card[data-accent="blue"]   { --current-color: var(--blue);   }
+  .card[data-accent="blue"]   .card-tag { color: var(--blue);   }
+  .card[data-accent="yellow"] { --current-color: var(--yellow); }
+  .card[data-accent="yellow"] .card-tag { color: var(--yellow); }
+  .card[data-accent="pink"]   { --current-color: var(--pink);   }
+  .card[data-accent="pink"]   .card-tag { color: var(--pink);   }
+  .card[data-accent="teal"]   { --current-color: var(--teal);   }
+  .card[data-accent="teal"]   .card-tag { color: var(--teal);   }
+  .card[data-accent="peach"]  { --current-color: var(--peach);  }
+  .card[data-accent="peach"]  .card-tag { color: var(--peach);  }
+  .card[data-accent="lav"]    { --current-color: var(--lavender); }
+  .card[data-accent="lav"]    .card-tag { color: var(--lavender); }
+  .card[data-accent="red"]    { --current-color: var(--red);    }
+  .card[data-accent="red"]    .card-tag { color: var(--red);    }
+
+  /* ── Footer ── */
+  footer {
+    max-width: 860px;
+    margin: 3rem auto 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    font-size: .68rem;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    font-size: .68rem;
+    color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: .35rem; }
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 540px) {
+    .cards { grid-template-columns: 1fr; }
+    h1 { font-size: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="prompt-line">
+    <span class="dollar">student@exam</span>
+    <span style="color:var(--blue)">~</span>
+    <span style="color:var(--muted)">$</span>
+    <span class="cmd">open linux-exam-toolkit.html</span>
+    <span class="cursor"></span>
+  </div>
+  <h1>Linux Exam Toolkit <span>// open-book edition</span></h1>
+  <p class="subtitle">Tools online • Generatoare • Referință rapidă — sortate în 2 moduri</p>
+</header>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('cmd')">
+    <span class="icon">⌘</span>după COMANDĂ
+  </button>
+  <button class="tab-btn" onclick="switchTab('concept')">
+    <span class="icon">◈</span>după CONCEPT
+  </button>
+</div>
+
+<!-- ════════════════════════════════════════════
+     VIEW 1 — după COMANDĂ
+════════════════════════════════════════════ -->
+<div class="view active" id="view-cmd">
+
+  <!-- ORICE COMANDĂ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-green">🔍 Orice comandă</span>
+      <span class="section-desc">Nu știi ce face o comandă? Începe aici.</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://explainshell.com" target="_blank" data-accent="green">
+        <div class="card-name">explainshell.com</div>
+        <div class="card-url">explainshell.com</div>
+        <div class="card-desc">Paste orice comandă → explică fiecare flag și argument. ★ Indispensabil.</div>
+        <div class="card-tag">explain</div>
+      </a>
+      <a class="card" href="https://tldr.inbrowser.app" target="_blank" data-accent="green">
+        <div class="card-name">TLDR Pages (web)</div>
+        <div class="card-url">tldr.inbrowser.app</div>
+        <div class="card-desc">Man pages simplificate cu exemple practice. Mult mai rapid decât man.</div>
+        <div class="card-tag">referință</div>
+      </a>
+      <a class="card" href="https://cheat.sh" target="_blank" data-accent="green">
+        <div class="card-name">cheat.sh</div>
+        <div class="card-url">cheat.sh</div>
+        <div class="card-desc">Cheatsheet instant pentru orice comandă. Ex: cheat.sh/tar, cheat.sh/awk</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+      <a class="card" href="https://cmdgenerator.org" target="_blank" data-accent="green">
+        <div class="card-name">CMD Generator</div>
+        <div class="card-url">cmdgenerator.org</div>
+        <div class="card-desc">Generator vizual pentru comenzi Linux/Unix: find, awk, sed, tar, ssh și altele.</div>
+        <div class="card-tag">generator</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CRON -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-yellow">⏰ cron / crontab</span>
+      <span class="section-desc">Programare taskuri</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://crontab.guru" target="_blank" data-accent="yellow">
+        <div class="card-name">crontab.guru</div>
+        <div class="card-url">crontab.guru</div>
+        <div class="card-desc">Editorul nr. 1 pentru expresii cron. Scrii "every Monday at 9am" → `0 9 * * 1`. ★★★</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://www.freeformatter.com/cron-expression-generator-quartz.html" target="_blank" data-accent="yellow">
+        <div class="card-name">Cron Expression Generator</div>
+        <div class="card-url">freeformatter.com</div>
+        <div class="card-desc">Generator alternativ cu interfață vizuală pe căsuțe. Util dacă ești mai vizual.</div>
+        <div class="card-tag">generator</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CHMOD -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-peach">🔐 chmod / chown / permisiuni</span>
+      <span class="section-desc">File permissions</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://chmod-calculator.com" target="_blank" data-accent="peach">
+        <div class="card-name">chmod-calculator.com</div>
+        <div class="card-url">chmod-calculator.com</div>
+        <div class="card-desc">Bifezi ce permisiuni vrei (rwx) → primești codul octal și simbolic instant.</div>
+        <div class="card-tag">calculator</div>
+      </a>
+      <a class="card" href="https://ss64.com/bash/chmod.html" target="_blank" data-accent="peach">
+        <div class="card-name">chmod Reference (ss64)</div>
+        <div class="card-url">ss64.com/bash/chmod</div>
+        <div class="card-desc">Referință completă chmod cu toate flag-urile și exemple. Inclusiv chown și umask.</div>
+        <div class="card-tag">referință</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- AWK -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-blue">✦ awk</span>
+      <span class="section-desc">Text processing avansat, coloane, filtrare</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://awk.js.org" target="_blank" data-accent="blue">
+        <div class="card-name">awk.js.org</div>
+        <div class="card-url">awk.js.org</div>
+        <div class="card-desc">Playground awk live în browser. Introduci input + program → vezi output instant.</div>
+        <div class="card-tag">playground</div>
+      </a>
+      <a class="card" href="https://langstop.com/linux-tools/awk-command-builder" target="_blank" data-accent="blue">
+        <div class="card-name">AWK Command Builder</div>
+        <div class="card-url">langstop.com</div>
+        <div class="card-desc">Constructor vizual awk: field extraction, pattern matching, funcții — fără să memorezi sintaxa.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://cmdgenerator.org/cmd-generators/awk/" target="_blank" data-accent="blue">
+        <div class="card-name">AWK CMD Generator</div>
+        <div class="card-url">cmdgenerator.org/awk</div>
+        <div class="card-desc">Exemple practice awk cu generator: sum coloane, filtrare, print fields specifice.</div>
+        <div class="card-tag">generator</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SED & REGEX -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-pink">✎ sed / grep / regex</span>
+      <span class="section-desc">Search & replace, pattern matching</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://regex101.com" target="_blank" data-accent="pink">
+        <div class="card-name">regex101.com</div>
+        <div class="card-url">regex101.com</div>
+        <div class="card-desc">Testează regex live cu explicații pentru fiecare grup. Suportă POSIX (grep, sed). ★★★</div>
+        <div class="card-tag">tester</div>
+      </a>
+      <a class="card" href="https://www.grymoire.com/Unix/Sed.html" target="_blank" data-accent="pink">
+        <div class="card-name">The Grymoire — sed</div>
+        <div class="card-url">grymoire.com/Unix/Sed</div>
+        <div class="card-desc">Cel mai bun tutorial/referință sed pe internet. Rapid de scanat, plin de exemple.</div>
+        <div class="card-tag">referință</div>
+      </a>
+      <a class="card" href="https://regextester.com" target="_blank" data-accent="pink">
+        <div class="card-name">regextester.com</div>
+        <div class="card-url">regextester.com</div>
+        <div class="card-desc">Alternativă simplă regex101 — mai puțin aglomerat, bun pentru verificare rapidă.</div>
+        <div class="card-tag">tester</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- FIND -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-teal">🔎 find</span>
+      <span class="section-desc">Căutare fișiere și directoare</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://cmdgenerator.org/cmd-generators/find/" target="_blank" data-accent="teal">
+        <div class="card-name">find CMD Generator</div>
+        <div class="card-url">cmdgenerator.org/find</div>
+        <div class="card-desc">Generează comanda find cu opțiunile dorite: nume, tip, dată, permisiuni, execuție.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://vargaviktor.hu/find_command_generator_en.html" target="_blank" data-accent="teal">
+        <div class="card-name">Find Command Generator (Viktor)</div>
+        <div class="card-url">vargaviktor.hu</div>
+        <div class="card-desc">Generator vizual simplu și clar pentru find pe Linux. Interfață formular, fără distrageri.</div>
+        <div class="card-tag">generator</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- BASH / SCRIPTING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-lav">{ } bash scripting</span>
+      <span class="section-desc">Scripts, condiții, loop-uri</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://www.shellcheck.net" target="_blank" data-accent="lav">
+        <div class="card-name">shellcheck.net</div>
+        <div class="card-url">shellcheck.net</div>
+        <div class="card-desc">Paste scriptul tău bash → găsește erorile și sugerează fix-uri. Linter gratuit. ★★★</div>
+        <div class="card-tag">linter / debug</div>
+      </a>
+      <a class="card" href="https://devhints.io/bash" target="_blank" data-accent="lav">
+        <div class="card-name">Bash Cheatsheet (devhints)</div>
+        <div class="card-url">devhints.io/bash</div>
+        <div class="card-desc">Cheatsheet complet bash: variabile, array-uri, condiții, loop-uri, funcții, șiruri.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+      <a class="card" href="https://onceupon.github.io/Bash-Oneliner/" target="_blank" data-accent="lav">
+        <div class="card-name">Bash One-Liners</div>
+        <div class="card-url">onceupon.github.io</div>
+        <div class="card-desc">Colecție mare de one-liner-uri bash: procese, rețea, fișiere, text. Caută cu Ctrl+F.</div>
+        <div class="card-tag">referință</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TERMINAL / PS1 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-green">$ terminal / PS1</span>
+      <span class="section-desc">Customizare prompt</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://ezprompt.net" target="_blank" data-accent="green">
+        <div class="card-name">ezprompt.net</div>
+        <div class="card-url">ezprompt.net</div>
+        <div class="card-desc">Generator PS1 vizual cu preview live: user, host, director, culori, git branch etc.</div>
+        <div class="card-tag">generator PS1</div>
+      </a>
+      <a class="card" href="http://bashrcgenerator.com" target="_blank" data-accent="green">
+        <div class="card-name">bashrcgenerator.com</div>
+        <div class="card-url">bashrcgenerator.com</div>
+        <div class="card-desc">Alternativă drag-and-drop pentru construirea promptului PS1 cu culori ANSI.</div>
+        <div class="card-tag">generator PS1</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAR / ARCHIVE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-yellow">📦 tar / arhive</span>
+      <span class="section-desc">Comprimare și extragere</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://tldr.inbrowser.app/pages/common/tar" target="_blank" data-accent="yellow">
+        <div class="card-name">tldr tar</div>
+        <div class="card-url">tldr.inbrowser.app/tar</div>
+        <div class="card-desc">Exemple practice imediate: creat, extras, listat. Nu trebuie să memorezi flag-uri.</div>
+        <div class="card-tag">referință rapidă</div>
+      </a>
+      <a class="card" href="https://cheat.sh/tar" target="_blank" data-accent="yellow">
+        <div class="card-name">cheat.sh/tar</div>
+        <div class="card-url">cheat.sh/tar</div>
+        <div class="card-desc">Cheatsheet tar direct în browser: toate cazurile uzuale cu flag-uri explicate.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SSH & CURL -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-blue">🌐 ssh / curl / rețea</span>
+      <span class="section-desc">Networking și transfer</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://curlbuilder.com" target="_blank" data-accent="blue">
+        <div class="card-name">curlbuilder.com</div>
+        <div class="card-url">curlbuilder.com</div>
+        <div class="card-desc">Generator vizual pentru comenzi curl: metode HTTP, headere, autentificare, fișiere.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://tldr.inbrowser.app/pages/common/ssh" target="_blank" data-accent="blue">
+        <div class="card-name">tldr ssh</div>
+        <div class="card-url">tldr.inbrowser.app/ssh</div>
+        <div class="card-desc">Exemple ssh practice: conectare, tunneling, copy fișiere (scp), key management.</div>
+        <div class="card-tag">referință rapidă</div>
+      </a>
+    </div>
+  </div>
+
+</div><!-- end view-cmd -->
+
+
+<!-- ════════════════════════════════════════════
+     VIEW 2 — după CONCEPT
+════════════════════════════════════════════ -->
+<div class="view" id="view-concept">
+
+  <!-- REFERINȚĂ RAPIDĂ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-green">⚡ Referință rapidă — orice</span>
+      <span class="section-desc">Prima oprire când nu știi exact ce cauți</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://explainshell.com" target="_blank" data-accent="green">
+        <div class="card-name">explainshell.com</div>
+        <div class="card-url">explainshell.com</div>
+        <div class="card-desc">"Ce face comanda asta?" → Paste și explică fiecare parte. Cel mai util din listă. ★</div>
+        <div class="card-tag">explain-anything</div>
+      </a>
+      <a class="card" href="https://tldr.inbrowser.app" target="_blank" data-accent="green">
+        <div class="card-name">TLDR Pages</div>
+        <div class="card-url">tldr.inbrowser.app</div>
+        <div class="card-desc">Man pages simplificate: caută orice comandă și primești exemple practice în 5 secunde.</div>
+        <div class="card-tag">man pages rapide</div>
+      </a>
+      <a class="card" href="https://cheat.sh" target="_blank" data-accent="green">
+        <div class="card-name">cheat.sh</div>
+        <div class="card-url">cheat.sh</div>
+        <div class="card-desc">Cheatsheet pentru orice. Adaugă /comandă în URL: cheat.sh/grep, cheat.sh/find etc.</div>
+        <div class="card-tag">cheatsheets</div>
+      </a>
+      <a class="card" href="https://devhints.io" target="_blank" data-accent="green">
+        <div class="card-name">devhints.io</div>
+        <div class="card-url">devhints.io</div>
+        <div class="card-desc">Cheatsheets vizuale: bash, vim, grep, awk, systemd, nginx. Design clar, ușor de scanat.</div>
+        <div class="card-tag">cheatsheets vizuale</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PERMISIUNI -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-peach">🔐 Permisiuni fișiere</span>
+      <span class="section-desc">chmod, chown, umask, SUID/SGID</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://chmod-calculator.com" target="_blank" data-accent="peach">
+        <div class="card-name">chmod-calculator.com</div>
+        <div class="card-url">chmod-calculator.com</div>
+        <div class="card-desc">Bifezi permisiunile dorite → primești automat forma octală (755) și simbolică (rwxr-xr-x).</div>
+        <div class="card-tag">calculator</div>
+      </a>
+      <a class="card" href="https://tldr.inbrowser.app/pages/common/chmod" target="_blank" data-accent="peach">
+        <div class="card-name">tldr chmod</div>
+        <div class="card-url">tldr.inbrowser.app/chmod</div>
+        <div class="card-desc">Exemple practice chmod pentru cele mai comune situații din examen.</div>
+        <div class="card-tag">referință rapidă</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PROCESARE TEXT -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-blue">✦ Procesare text</span>
+      <span class="section-desc">grep, awk, sed, cut, sort, uniq</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://regex101.com" target="_blank" data-accent="blue">
+        <div class="card-name">regex101.com</div>
+        <div class="card-url">regex101.com</div>
+        <div class="card-desc">Testează și construiește regex pentru grep/sed/awk cu explicații detaliate pe grupe.</div>
+        <div class="card-tag">regex tester</div>
+      </a>
+      <a class="card" href="https://awk.js.org" target="_blank" data-accent="blue">
+        <div class="card-name">awk.js.org</div>
+        <div class="card-url">awk.js.org</div>
+        <div class="card-desc">Playground awk live: scrii programul, introduci input, vezi output imediat în browser.</div>
+        <div class="card-tag">playground</div>
+      </a>
+      <a class="card" href="https://langstop.com/linux-tools/awk-command-builder" target="_blank" data-accent="blue">
+        <div class="card-name">AWK Command Builder</div>
+        <div class="card-url">langstop.com</div>
+        <div class="card-desc">Generator vizual pentru awk: extrage coloane, filtrează linii, numără — fără sintaxă memorată.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://www.grymoire.com/Unix/Sed.html" target="_blank" data-accent="blue">
+        <div class="card-name">The Grymoire — sed</div>
+        <div class="card-url">grymoire.com</div>
+        <div class="card-desc">Referință sed completă și organizată. Caută cu Ctrl+F ce ai nevoie — totul e pe o pagină.</div>
+        <div class="card-tag">referință</div>
+      </a>
+      <a class="card" href="https://devhints.io/awk" target="_blank" data-accent="blue">
+        <div class="card-name">Awk Cheatsheet (devhints)</div>
+        <div class="card-url">devhints.io/awk</div>
+        <div class="card-desc">Cheatsheet vizual awk: variabile built-in, funcții, pattern-uri, NR/NF, BEGIN/END.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PROCESE & SISTEM -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-red">⚙ Procese & sistem</span>
+      <span class="section-desc">ps, top, kill, systemd, jobs, signals</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://tldr.inbrowser.app/pages/linux/systemctl" target="_blank" data-accent="red">
+        <div class="card-name">tldr systemctl</div>
+        <div class="card-url">tldr.inbrowser.app/systemctl</div>
+        <div class="card-desc">Start, stop, enable, status — toate comenzile systemd esențiale cu exemple directe.</div>
+        <div class="card-tag">referință rapidă</div>
+      </a>
+      <a class="card" href="https://devhints.io/systemd" target="_blank" data-accent="red">
+        <div class="card-name">systemd Cheatsheet</div>
+        <div class="card-url">devhints.io/systemd</div>
+        <div class="card-desc">Cheatsheet complet systemd: unit files, journalctl, targets, timers — ușor de scanat.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+      <a class="card" href="https://cheat.sh/ps" target="_blank" data-accent="red">
+        <div class="card-name">cheat.sh/ps</div>
+        <div class="card-url">cheat.sh/ps</div>
+        <div class="card-desc">Exemple practice ps aux, ps -ef, filtrare procese, combinații cu grep și kill.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PROGRAMAREA TASKURILOR -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-yellow">⏰ Programare taskuri</span>
+      <span class="section-desc">cron, crontab, at, systemd timers</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://crontab.guru" target="_blank" data-accent="yellow">
+        <div class="card-name">crontab.guru ★</div>
+        <div class="card-url">crontab.guru</div>
+        <div class="card-desc">Generatorul cron nr. 1. Descrie în cuvinte → primești expresia exactă. Indispensabil.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://www.freeformatter.com/cron-expression-generator-quartz.html" target="_blank" data-accent="yellow">
+        <div class="card-name">Cron Generator (visual)</div>
+        <div class="card-url">freeformatter.com</div>
+        <div class="card-desc">Interfață cu căsuțe bifabile pentru secunde, minute, ore, zile — mai vizual decât guru.</div>
+        <div class="card-tag">generator</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- SCRIPTING -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-lav">{ } Bash Scripting</span>
+      <span class="section-desc">Scripts, variabile, funcții, condiții, loop-uri</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://www.shellcheck.net" target="_blank" data-accent="lav">
+        <div class="card-name">shellcheck.net ★</div>
+        <div class="card-url">shellcheck.net</div>
+        <div class="card-desc">Paste scriptul → află exact ce e greșit cu explicații. Cel mai bun debugger bash online.</div>
+        <div class="card-tag">linter</div>
+      </a>
+      <a class="card" href="https://devhints.io/bash" target="_blank" data-accent="lav">
+        <div class="card-name">Bash Cheatsheet</div>
+        <div class="card-url">devhints.io/bash</div>
+        <div class="card-desc">Tot ce trebuie: variabile, arrays, if/else, for/while, funcții, string ops, redirections.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+      <a class="card" href="https://onceupon.github.io/Bash-Oneliner/" target="_blank" data-accent="lav">
+        <div class="card-name">Bash One-Liners</div>
+        <div class="card-url">onceupon.github.io</div>
+        <div class="card-desc">Colecție uriașă de soluții one-liner bash categorizate. Caută cu Ctrl+F tema ta.</div>
+        <div class="card-tag">referință</div>
+      </a>
+      <a class="card" href="https://www.bashoneliners.com" target="_blank" data-accent="lav">
+        <div class="card-name">bashoneliners.com</div>
+        <div class="card-url">bashoneliners.com</div>
+        <div class="card-desc">Comunitate de one-liner-uri bash cu rating. Bun pentru inspirație și soluții rapide.</div>
+        <div class="card-tag">comunitate</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CĂUTARE FIȘIERE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-teal">🔎 Căutare în sistem</span>
+      <span class="section-desc">find, locate, which, whereis</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://cmdgenerator.org/cmd-generators/find/" target="_blank" data-accent="teal">
+        <div class="card-name">find CMD Generator</div>
+        <div class="card-url">cmdgenerator.org/find</div>
+        <div class="card-desc">Construiește comanda find vizual: tip fișier, nume, dată modificată, permisiuni, -exec.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://tldr.inbrowser.app/pages/common/find" target="_blank" data-accent="teal">
+        <div class="card-name">tldr find</div>
+        <div class="card-url">tldr.inbrowser.app/find</div>
+        <div class="card-desc">Cele mai comune utilizări find cu exemple gata de copiat. Rapid și fără ambiguități.</div>
+        <div class="card-tag">referință rapidă</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- REȚEA -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-blue">🌐 Rețea & transfer</span>
+      <span class="section-desc">ssh, curl, wget, netstat, ping, scp</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://curlbuilder.com" target="_blank" data-accent="blue">
+        <div class="card-name">curlbuilder.com</div>
+        <div class="card-url">curlbuilder.com</div>
+        <div class="card-desc">Generator vizual curl: metode, headere, autentificare, upload fișier, follow redirects.</div>
+        <div class="card-tag">generator</div>
+      </a>
+      <a class="card" href="https://devhints.io/curl" target="_blank" data-accent="blue">
+        <div class="card-name">Curl Cheatsheet</div>
+        <div class="card-url">devhints.io/curl</div>
+        <div class="card-desc">Referință rapidă curl cu toate flag-urile importante grupate pe categorii.</div>
+        <div class="card-tag">cheatsheet</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- CUSTOMIZARE TERMINAL -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-green">$ Customizare terminal</span>
+      <span class="section-desc">PS1, .bashrc, alias-uri, culori ANSI</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://ezprompt.net" target="_blank" data-accent="green">
+        <div class="card-name">ezprompt.net</div>
+        <div class="card-url">ezprompt.net</div>
+        <div class="card-desc">Generator PS1 cu preview live: adaugi elemente (user, host, path, timp) și alegi culori.</div>
+        <div class="card-tag">generator PS1</div>
+      </a>
+      <a class="card" href="http://bashrcgenerator.com" target="_blank" data-accent="green">
+        <div class="card-name">bashrcgenerator.com</div>
+        <div class="card-url">bashrcgenerator.com</div>
+        <div class="card-desc">Drag-and-drop pentru PS1. Generează linia exactă de pus în .bashrc cu coduri ANSI.</div>
+        <div class="card-tag">generator PS1</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- PRACTICĂ LIVE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-label lbl-pink">▶ Terminal în browser</span>
+      <span class="section-desc">Testează comenzi fără să deschizi un terminal local</span>
+    </div>
+    <div class="cards">
+      <a class="card" href="https://www.webminal.org" target="_blank" data-accent="pink">
+        <div class="card-name">webminal.org</div>
+        <div class="card-url">webminal.org</div>
+        <div class="card-desc">Terminal Linux real (nu simulat) în browser. Bash real, comenzi reale, output real.</div>
+        <div class="card-tag">terminal live</div>
+      </a>
+      <a class="card" href="https://bellard.org/jslinux/" target="_blank" data-accent="pink">
+        <div class="card-name">JSLinux</div>
+        <div class="card-url">bellard.org/jslinux</div>
+        <div class="card-desc">Linux complet emulat în browser. Bun pentru teste izolate fără cont sau setup.</div>
+        <div class="card-tag">emulator</div>
+      </a>
+    </div>
+  </div>
+
+</div><!-- end view-concept -->
+
+<!-- FOOTER -->
+<footer>
+  <span>Linux Exam Toolkit • open-book edition</span>
+  <span>Ctrl+F = cel mai bun prieten al tău</span>
+</footer>
+
+<script>
+  function switchTab(name) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + name).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
