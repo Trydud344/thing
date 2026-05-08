@@ -255,6 +255,205 @@
     .cards { grid-template-columns: 1fr; }
     h1 { font-size: 1.2rem; }
   }
+
+  /* ── Search ── */
+  .search-container {
+    max-width: 860px;
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0 .85rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .search-bar:focus-within {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(166,227,161,.08);
+  }
+
+  .search-icon {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-right: .5rem;
+    flex-shrink: 0;
+  }
+
+  #search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    padding: .75rem 0;
+    outline: none;
+  }
+  #search-input::placeholder {
+    color: var(--prompt);
+    font-size: .76rem;
+  }
+
+  #search-clear {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: .9rem;
+    padding: .3rem .4rem;
+    border-radius: 4px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  #search-clear.visible { opacity: 1; }
+  #search-clear:hover { color: var(--red); }
+
+  #search-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0; right: 0;
+    margin-top: .35rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 480px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 30px rgba(0,0,0,.5);
+  }
+  #search-results.active { display: block; }
+
+  .search-result-item {
+    display: block;
+    padding: .7rem 1rem;
+    text-decoration: none;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    transition: background .12s;
+    cursor: pointer;
+  }
+  .search-result-item:last-of-type { border-bottom: none; }
+  .search-result-item:hover, .search-result-item.focused {
+    background: var(--bg3);
+  }
+  .search-result-item .sr-name {
+    font-size: .82rem;
+    font-weight: 700;
+  }
+  .search-result-item .sr-section {
+    font-size: .6rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    margin-left: .4rem;
+  }
+  .search-result-item .sr-desc {
+    font-size: .7rem;
+    color: var(--muted);
+    margin-top: .15rem;
+    line-height: 1.4;
+  }
+  .search-result-item .sr-url {
+    font-size: .6rem;
+    color: var(--prompt);
+    margin-top: .1rem;
+  }
+
+  .search-no-results {
+    padding: 1.2rem 1rem;
+  }
+
+  .search-suggestions {
+    padding: 0 1rem 1.2rem;
+  }
+  .search-suggestions h4 {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--yellow);
+    margin-bottom: .5rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .search-suggestions h4:first-of-type { margin-top: 1rem; }
+
+  .suggestion-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem .6rem;
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: .74rem;
+    transition: background .12s;
+    margin-bottom: .15rem;
+  }
+  .suggestion-link:hover { background: var(--bg3); }
+  .suggestion-link .sl-site {
+    font-weight: 700;
+    font-size: .76rem;
+    color: var(--blue);
+  }
+  .suggestion-link .sl-query {
+    color: var(--muted);
+    font-size: .7rem;
+  }
+
+  .google-suggestions {
+    padding: 0 1rem 1.2rem;
+  }
+  .google-suggestions h4 {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--peach);
+    margin-bottom: .5rem;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .google-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .4rem .6rem;
+    border-radius: 4px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: .73rem;
+    transition: background .12s;
+    margin-bottom: .12rem;
+  }
+  .google-link:hover { background: var(--bg3); }
+  .google-link .gl-icon { color: var(--peach); font-size: .8rem; flex-shrink: 0; }
+  .google-link .gl-query { color: var(--text); }
+  .google-link .gl-hint { color: var(--muted); font-size: .65rem; margin-left: auto; }
+
+  .search-shortcut-hint {
+    text-align: right;
+    font-size: .6rem;
+    color: var(--prompt);
+    margin-top: .3rem;
+    opacity: .7;
+  }
+
+  .search-no-results-msg {
+    color: var(--muted);
+    font-size: .78rem;
+    padding: .5rem 0;
+  }
+  .search-no-results-msg strong { color: var(--yellow); }
+
+  .search-results-divider {
+    height: 1px;
+    background: var(--border);
+    margin: .3rem 0;
+  }
 </style>
 </head>
 <body>
@@ -271,6 +470,16 @@
   <h1>Linux Exam Toolkit <span>// open-book edition</span></h1>
   <p class="subtitle">Tools online • Generatoare • Referință rapidă — sortate în 2 moduri</p>
 </header>
+
+<!-- ── SEARCH ── -->
+<div class="search-container">
+  <div class="search-bar">
+    <span class="search-icon">&#128269;</span>
+    <input type="text" id="search-input" placeholder="Search commands, tools, concepts… (press / to focus)" autocomplete="off">
+    <button class="search-clear" id="search-clear" title="Clear search (Esc)">&times;</button>
+  </div>
+  <div id="search-results"></div>
+</div>
 
 <!-- ── TABS ── -->
 <div class="tabs">
@@ -817,17 +1026,233 @@
 
 <!-- FOOTER -->
 <footer>
-  <span>Linux Exam Toolkit • open-book edition</span>
-  <span>Ctrl+F = cel mai bun prieten al tău</span>
+  <span>Press / to search &bull; Linux Exam Toolkit</span>
+  <span>open-book edition</span>
 </footer>
 
 <script>
   function switchTab(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('view-' + name).classList.add('active');
     event.currentTarget.classList.add('active');
   }
+
+  // ── Search ──
+  var cardIndex = [];
+  var focusedIdx = -1;
+
+  function buildIndex() {
+    cardIndex = [];
+    document.querySelectorAll('.card').forEach(function(card) {
+      var section = card.closest('.section');
+      var sectionLabel = section ? (section.querySelector('.section-label') ?
+        section.querySelector('.section-label').textContent.replace(/[^\w\s]/g, '').trim() : '') : '';
+      var sectionDesc = section ? (section.querySelector('.section-desc') ?
+        section.querySelector('.section-desc').textContent.trim() : '') : '';
+      cardIndex.push({
+        name: (card.querySelector('.card-name') || {}).textContent || '',
+        desc: (card.querySelector('.card-desc') || {}).textContent || '',
+        url: card.href,
+        tag: (card.querySelector('.card-tag') || {}).textContent || '',
+        section: sectionLabel,
+        sectionDesc: sectionDesc,
+        accent: card.dataset.accent,
+        element: card
+      });
+    });
+  }
+
+  buildIndex();
+
+  function search(query) {
+    var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return [];
+
+    var scored = cardIndex.map(function(card) {
+      var score = 0;
+      var nameLower = card.name.toLowerCase();
+      var descLower = card.desc.toLowerCase();
+      var tagLower = card.tag.toLowerCase();
+      var sectionLower = card.section.toLowerCase();
+      var sdLower = card.sectionDesc.toLowerCase();
+
+      for (var i = 0; i < terms.length; i++) {
+        var t = terms[i];
+        if (nameLower.indexOf(t) !== -1) score += 100;
+        if (tagLower.indexOf(t) !== -1) score += 50;
+        if (sectionLower.indexOf(t) !== -1) score += 30;
+        if (descLower.indexOf(t) !== -1) score += 15;
+        if (sdLower.indexOf(t) !== -1) score += 10;
+      }
+      return { card: card, score: score };
+    });
+
+    return scored.filter(function(c) { return c.score > 0; })
+      .sort(function(a, b) { return b.score - a.score; });
+  }
+
+  function generateGoogleQueries(query) {
+    var q = query.trim();
+    return [
+      { text: q + ' site:stackoverflow.com', hint: 'stackoverflow', site: 'stackoverflow.com' },
+      { text: q + ' site:unix.stackexchange.com', hint: 'unix.se', site: 'unix.stackexchange.com' },
+      { text: q + ' site:serverfault.com', hint: 'serverfault', site: 'serverfault.com' },
+      { text: q + ' site:superuser.com', hint: 'superuser', site: 'superuser.com' },
+      { text: q + ' site:wiki.archlinux.org', hint: 'arch wiki', site: 'wiki.archlinux.org' },
+      { text: q + ' site:github.com', hint: 'github', site: 'github.com' }
+    ];
+  }
+
+  function renderResults(results, query) {
+    var container = document.getElementById('search-results');
+    if (query.length === 0) {
+      container.innerHTML = '';
+      container.classList.remove('active');
+      focusedIdx = -1;
+      return;
+    }
+    if (query.length < 2) {
+      container.innerHTML = '';
+      container.classList.remove('active');
+      focusedIdx = -1;
+      return;
+    }
+
+    var html = '';
+
+    var q = query.trim();
+    var encoded = encodeURIComponent(q);
+
+    if (results.length > 0) {
+      for (var i = 0; i < results.length; i++) {
+        var r = results[i];
+        html += '<a class="search-result-item" href="' + r.card.url + '" target="_blank" data-idx="' + i + '">';
+        html += '<div><span class="sr-name">' + r.card.name + '</span>';
+        html += '<span class="sr-section">' + r.card.section + '</span></div>';
+        html += '<div class="sr-desc">' + r.card.desc + '</div>';
+        html += '<div class="sr-url">' + r.card.url + '</div>';
+        html += '</a>';
+      }
+      html += '<div class="search-results-divider"></div>';
+    } else {
+      html += '<div class="search-no-results">';
+      html += '<div class="search-no-results-msg">No direct matches for <strong>&ldquo;' + q + '&rdquo;</strong>.</div>';
+      html += '</div>';
+    }
+
+    // Always show suggestions
+    html += '<div class="search-suggestions">';
+    html += '<h4>&#128269; Sites that might have what you need</h4>';
+    html += '<a class="suggestion-link" href="https://tldr.inbrowser.app/pages/common/' + encoded + '" target="_blank">';
+    html += '<span class="sl-site">TLDR Pages</span>';
+    html += '<span class="sl-query">tldr.inbrowser.app/pages/common/' + q + '</span>';
+    html += '</a>';
+    html += '<a class="suggestion-link" href="https://cheat.sh/' + encoded + '" target="_blank">';
+    html += '<span class="sl-site">cheat.sh</span>';
+    html += '<span class="sl-query">cheat.sh/' + q + '</span>';
+    html += '</a>';
+    html += '<a class="suggestion-link" href="https://explainshell.com/explain?cmd=' + encoded + '" target="_blank">';
+    html += '<span class="sl-site">explainshell.com</span>';
+    html += '<span class="sl-query">explainshell.com/explain?cmd=' + q + '</span>';
+    html += '</a>';
+    html += '</div>';
+
+    // Google searches
+    var gqueries = generateGoogleQueries(q);
+    html += '<div class="google-suggestions">';
+    html += '<h4>&#127760; Try these Google searches</h4>';
+    for (var j = 0; j < gqueries.length; j++) {
+      var gq = gqueries[j];
+      html += '<a class="google-link" href="https://www.google.com/search?q=' + encodeURIComponent(gq.text) + '" target="_blank">';
+      html += '<span class="gl-icon">G</span>';
+      html += '<span class="gl-query">' + gq.text + '</span>';
+      html += '<span class="gl-hint">' + gq.hint + '</span>';
+      html += '</a>';
+    }
+    html += '</div>';
+    }
+
+    container.innerHTML = html;
+    container.classList.add('active');
+    focusedIdx = -1;
+  }
+
+  // ── Event handlers ──
+  var searchInput = document.getElementById('search-input');
+  var searchClear = document.getElementById('search-clear');
+  var searchResults = document.getElementById('search-results');
+
+  searchInput.addEventListener('input', function() {
+    var val = this.value;
+    searchClear.classList.toggle('visible', val.length > 0);
+    var results = search(val);
+    renderResults(results, val);
+  });
+
+  searchClear.addEventListener('click', function() {
+    searchInput.value = '';
+    searchClear.classList.remove('visible');
+    searchResults.innerHTML = '';
+    searchResults.classList.remove('active');
+    searchInput.focus();
+  });
+
+  // Keyboard: / to focus, Esc to clear, arrows to navigate
+  document.addEventListener('keydown', function(e) {
+    if (e.key === '/' && document.activeElement !== searchInput) {
+      // Don't intercept / in input/textarea
+      if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
+      e.preventDefault();
+      searchInput.focus();
+      searchInput.select();
+      return;
+    }
+    if (e.key === 'Escape' && document.activeElement === searchInput) {
+      searchClear.click();
+      return;
+    }
+    if (!searchResults.classList.contains('active')) return;
+
+    var items = searchResults.querySelectorAll('.search-result-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      focusedIdx = Math.min(focusedIdx + 1, items.length - 1);
+      updateFocus(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      focusedIdx = Math.max(focusedIdx - 1, -1);
+      updateFocus(items);
+    } else if (e.key === 'Enter' && focusedIdx >= 0 && items[focusedIdx]) {
+      e.preventDefault();
+      items[focusedIdx].click();
+    }
+  });
+
+  function updateFocus(items) {
+    items.forEach(function(item, i) {
+      item.classList.toggle('focused', i === focusedIdx);
+    });
+    if (focusedIdx >= 0 && items[focusedIdx]) {
+      items[focusedIdx].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  // Close results when clicking outside
+  document.addEventListener('click', function(e) {
+    var container = document.querySelector('.search-container');
+    if (container && !container.contains(e.target)) {
+      searchResults.classList.remove('active');
+    }
+  });
+
+  // Rebuild index in case DOM changes (not needed for static, but safe)
+  // Also rebuild when tabs switch in case cards are added dynamically
+  var origSwitchTab = switchTab;
+  switchTab = function(name) {
+    origSwitchTab(name);
+    buildIndex();
+  };
 </script>
 
 </body>
