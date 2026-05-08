@@ -483,10 +483,10 @@
 
 <!-- ── TABS ── -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('cmd')">
+  <button class="tab-btn active" onclick="switchTab('cmd', this)">
     <span class="icon">⌘</span>după COMANDĂ
   </button>
-  <button class="tab-btn" onclick="switchTab('concept')">
+  <button class="tab-btn" onclick="switchTab('concept', this)">
     <span class="icon">◈</span>după CONCEPT
   </button>
 </div>
@@ -1031,11 +1031,11 @@
 </footer>
 
 <script>
-  function switchTab(name) {
+  function switchTab(name, btn) {
     document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
     document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.getElementById('view-' + name).classList.add('active');
-    event.currentTarget.classList.add('active');
+    if (btn) btn.classList.add('active');
   }
 
   // ── Search ──
@@ -1171,7 +1171,6 @@
       html += '</a>';
     }
     html += '</div>';
-    }
 
     container.innerHTML = html;
     container.classList.add('active');
@@ -1249,8 +1248,8 @@
   // Rebuild index in case DOM changes (not needed for static, but safe)
   // Also rebuild when tabs switch in case cards are added dynamically
   var origSwitchTab = switchTab;
-  switchTab = function(name) {
-    origSwitchTab(name);
+  switchTab = function(name, btn) {
+    origSwitchTab(name, btn);
     buildIndex();
   };
 </script>
